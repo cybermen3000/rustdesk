@@ -58,6 +58,12 @@ pub fn core_main() -> Option<CoreMainAction> {
     }
     #[cfg(not(all(target_os = "linux", feature = "drm")))]
     crate::load_custom_client();
+    {
+        let mut app_name = hbb_common::config::APP_NAME.write().unwrap();
+        if app_name.eq("RustDesk") {
+            *app_name = "Corebifact".to_owned();
+        }
+    }
     #[cfg(windows)]
     if !crate::platform::windows::bootstrap() {
         // return None to terminate the process
