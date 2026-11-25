@@ -86,8 +86,28 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
 
   std::wstring app_name = L"Corebifact";
 
+  // If launched from the downloaded/portable installer (rustdesk.exe in temp,
+  // not the installed Corebifact.exe) with no arguments, skip FindWindowW so
+  // core_main() can stop any running service/process and reinstall cleanly.
+  bool skip_single_instance = false;
+  if (command_line_arguments.empty()) {
+    wchar_t exe_path[MAX_PATH] = {0};
+    DWORD len = ::GetModuleFileNameW(NULL, exe_path, MAX_PATH);
+    if (len > 0) {
+      std::wstring path_str(exe_path, len);
+      const std::wstring installed_suffix = L"\\Corebifact.exe";
+      if (path_str.size() < installed_suffix.size() ||
+          _wcsicmp(path_str.c_str() + path_str.size() - installed_suffix.size(),
+                   installed_suffix.c_str()) != 0) {
+        skip_single_instance = true;
+      }
+    }
+  }
+
   // Uri links dispatch
-  HWND hwnd = ::FindWindowW(getWindowClassName(), app_name.c_str());
+  HWND hwnd = skip_single_instance
+                  ? NULL
+                  : ::FindWindowW(getWindowClassName(), app_name.c_str());
   if (hwnd != NULL) {
     // Allow multiple flutter instances when being executed by parameters
     // contained in whitelists.
