@@ -233,9 +233,9 @@ class _InstallPageBodyState extends State<_InstallPageBody>
                           InkWell(
                             hoverColor: Colors.transparent,
                             onTap: () => launchUrlString(
-                                'https://rustdesk.com/privacy.html'),
+                                'https://www.corebifact.com/soporte_corebifact'),
                             child: Tooltip(
-                              message: 'https://rustdesk.com/privacy.html',
+                              message: 'https://www.corebifact.com/soporte_corebifact',
                               child: Row(children: [
                                 Icon(Icons.launch_outlined, size: 16)
                                     .marginOnly(right: 5),

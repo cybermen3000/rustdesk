@@ -139,6 +139,23 @@ class _OnlineStatusWidgetState extends State<OnlineStatusWidget> {
             // ready && public
             // No need to show the guide if is custom client.
             if (!isIncomingOnly) setupServerWidget(),
+            if (!isIncomingOnly) const Spacer(),
+            if (!isIncomingOnly)
+              Padding(
+                padding: const EdgeInsets.only(right: 16.0),
+                child: Text(
+                  'Uso Exclusivo de Corebifact',
+                  style: TextStyle(
+                    fontSize: 12.5,
+                    fontWeight: FontWeight.w600,
+                    color: Theme.of(context)
+                        .textTheme
+                        .titleLarge
+                        ?.color
+                        ?.withOpacity(0.65),
+                  ),
+                ),
+              ),
           ],
         );
 

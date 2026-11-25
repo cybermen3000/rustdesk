@@ -1707,7 +1707,25 @@ pub fn install_me(options: &str, path: String, silent: bool, debug: bool) -> Res
             .to_str()
             .ok_or_else(|| anyhow!("Configuration path is not valid Unicode"))?,
     )?;
-    let shortcut_icon_location = get_custom_icon(&path, &cur_exe);
+    let mut shortcut_icon_location = get_custom_icon(&path, &cur_exe);
+    let mut versioned_icon_cmd = String::new();
+    if shortcut_icon_location.is_some() {
+        let build_tag: String = crate::BUILD_DATE
+            .chars()
+            .filter(|c| c.is_ascii_digit())
+            .collect();
+        let tag = if build_tag.is_empty() {
+            "current".to_owned()
+        } else {
+            build_tag
+        };
+        let versioned_icon_path = format!("{path}\\data\\flutter_assets\\assets\\icon_{tag}.ico");
+        validate_install_value(&versioned_icon_path)?;
+        versioned_icon_cmd = format!(
+            "\r\ndel /F /Q \"{path}\\data\\flutter_assets\\assets\\icon_*.ico\"\r\ncopy /Y \"{path}\\data\\flutter_assets\\assets\\icon.ico\" \"{versioned_icon_path}\""
+        );
+        shortcut_icon_location = Some(versioned_icon_path);
+    }
     if let Some(icon) = shortcut_icon_location.as_deref() {
         validate_install_value(icon)?;
     }
@@ -1818,7 +1836,7 @@ sc delete RustDesk
 chcp 65001
 md \"{path}\"
 {copy_exe}
-{rename_exe}
+{rename_exe}{versioned_icon_cmd}
 reg add {subkey} /f
 reg add {subkey} /f /v DisplayIcon /t REG_SZ /d \"{display_icon}\"
 reg add {subkey} /f /v DisplayName /t REG_SZ /d \"{app_name}\"
