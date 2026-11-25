@@ -165,15 +165,8 @@ pub fn core_main() -> Option<CoreMainAction> {
         && !_is_run_as_system
     {
         config::Config::set_option("stop-service".to_owned(), "".to_owned());
-        let options = crate::platform::get_silent_install_options(None);
-        match crate::platform::install_me(options, "".to_owned(), false, false) {
-            Ok(_) => return None,
-            Err(err) => {
-                log::error!("Auto-install failed: {err}");
-                args.push("--install".to_owned());
-                flutter_args.push("--install".to_string());
-            }
-        }
+        args.push("--install".to_owned());
+        flutter_args.push("--install".to_string());
     }
     if args.contains(&"--noinstall".to_string()) {
         args.clear();

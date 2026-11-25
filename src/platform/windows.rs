@@ -1838,6 +1838,8 @@ reg add {subkey} /f /v WindowsInstaller /t REG_DWORD /d 0
 {tray_shortcuts}
 {shortcuts}
 copy /Y \"{tmp_path}\\Uninstall {app_name}.lnk\" \"{path}\\\"
+ie4uinit.exe -ClearIconCache
+ie4uinit.exe -show
 {dels}
 {import_config}
 {after_install}
