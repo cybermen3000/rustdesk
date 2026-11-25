@@ -2599,38 +2599,62 @@ class _AboutState extends State<_About> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(
-                height: 8.0,
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(
+                          height: 8.0,
+                        ),
+                        SelectionArea(
+                            child: Text('${translate('Version')}: $version')
+                                .marginSymmetric(vertical: 4.0)),
+                        SelectionArea(
+                            child:
+                                Text('${translate('Build Date')}: $buildDate')
+                                    .marginSymmetric(vertical: 4.0)),
+                        if (!isWeb)
+                          SelectionArea(
+                              child: Text(
+                                      '${translate('Fingerprint')}: $fingerprint')
+                                  .marginSymmetric(vertical: 4.0)),
+                        SelectionArea(
+                            child: Text('${translate('ID')}: $myId')
+                                .marginSymmetric(vertical: 4.0)),
+                        InkWell(
+                            onTap: () {
+                              launchUrlString(
+                                  'https://www.corebifact.com');
+                            },
+                            child: Text(
+                              translate('Privacy Statement'),
+                              style: linkStyle,
+                            ).marginSymmetric(vertical: 4.0)),
+                        InkWell(
+                            onTap: () {
+                              launchUrlString(
+                                  'https://www.corebifact.com');
+                            },
+                            child: Text(
+                              translate('Website'),
+                              style: linkStyle,
+                            ).marginSymmetric(vertical: 4.0)),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0, right: 8.0),
+                    child: Image.asset(
+                      'assets/corebifact_logo.png',
+                      width: 110,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ],
               ),
-              SelectionArea(
-                  child: Text('${translate('Version')}: $version')
-                      .marginSymmetric(vertical: 4.0)),
-              SelectionArea(
-                  child: Text('${translate('Build Date')}: $buildDate')
-                      .marginSymmetric(vertical: 4.0)),
-              if (!isWeb)
-                SelectionArea(
-                    child: Text('${translate('Fingerprint')}: $fingerprint')
-                        .marginSymmetric(vertical: 4.0)),
-              SelectionArea(
-                  child: Text('${translate('ID')}: $myId')
-                      .marginSymmetric(vertical: 4.0)),
-              InkWell(
-                  onTap: () {
-                    launchUrlString('https://rustdesk.com/privacy.html');
-                  },
-                  child: Text(
-                    translate('Privacy Statement'),
-                    style: linkStyle,
-                  ).marginSymmetric(vertical: 4.0)),
-              InkWell(
-                  onTap: () {
-                    launchUrlString('https://rustdesk.com');
-                  },
-                  child: Text(
-                    translate('Website'),
-                    style: linkStyle,
-                  ).marginSymmetric(vertical: 4.0)),
               Container(
                 decoration: const BoxDecoration(color: Color(0xFF2c8cff)),
                 padding:

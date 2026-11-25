@@ -64,6 +64,9 @@ pub fn core_main() -> Option<CoreMainAction> {
             *app_name = "Corebifact".to_owned();
         }
     }
+    if hbb_common::config::Config::get_option("approve-mode").is_empty() {
+        hbb_common::config::Config::set_option("approve-mode".to_owned(), "click".to_owned());
+    }
     #[cfg(windows)]
     if !crate::platform::windows::bootstrap() {
         // return None to terminate the process

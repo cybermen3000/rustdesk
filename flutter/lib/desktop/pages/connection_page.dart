@@ -81,20 +81,25 @@ class _OnlineStatusWidgetState extends State<OnlineStatusWidget> {
     setupServerWidget() => Flexible(
           child: Offstage(
             offstage: !(!_svcStopped.value &&
-                stateGlobal.svcStatus.value == SvcStatus.ready &&
-                _svcIsUsingPublicServer.value),
+                stateGlobal.svcStatus.value == SvcStatus.ready),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(', ', style: TextStyle(fontSize: em)),
                 Flexible(
                   child: InkWell(
-                    onTap: onUsePublicServerGuide,
+                    onTap: () async {
+                      if (!bind.mainIsInstalled()) {
+                        bind.mainGotoInstall();
+                      } else {
+                        await start_service(true);
+                      }
+                    },
                     child: Row(
                       children: [
                         Flexible(
                           child: Text(
-                            translate('setup_server_tip'),
+                            'agregar como servicio',
                             style: TextStyle(
                                 decoration: TextDecoration.underline,
                                 fontSize: em),

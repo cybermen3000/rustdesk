@@ -1081,22 +1081,6 @@ class _CmControlPanel extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        Offstage(
-          offstage: !showElevation || !showAccept,
-          child: buildButton(context, color: Colors.green[700], onClick: () {
-            handleAccept(context);
-            handleElevate(context);
-            windowManager.minimize();
-          },
-              text: 'Accept and Elevate',
-              icon: Icon(
-                Icons.security_rounded,
-                color: Colors.white,
-                size: 14,
-              ),
-              textColor: Colors.white,
-              tooltip: 'accept_and_elevate_btn_tooltip'),
-        ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -1109,9 +1093,12 @@ class _CmControlPanel extends StatelessWidget {
                       color: MyTheme.accent,
                       onClick: () {
                         handleAccept(context);
+                        if (showElevation) {
+                          handleElevate(context);
+                        }
                         windowManager.minimize();
                       },
-                      text: 'Accept',
+                      text: 'Aprobar',
                       textColor: Colors.white,
                     ),
                   ],
@@ -1123,7 +1110,7 @@ class _CmControlPanel extends StatelessWidget {
                 color: Colors.transparent,
                 border: Border.all(color: Colors.grey),
                 onClick: handleDisconnect,
-                text: 'Cancel',
+                text: 'Rechazar',
                 textColor: null,
               ),
             ),

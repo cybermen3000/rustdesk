@@ -91,7 +91,6 @@ class _DesktopHomePageState extends State<DesktopHomePage>
       ),
       buildTip(context),
       if (!isOutgoingOnly) buildIDBoard(context),
-      if (!isOutgoingOnly) buildPasswordBoard(context),
       FutureBuilder<Widget>(
         future: Future.value(
             Obx(() => buildHelpCards(stateGlobal.updateUrl.value))),
@@ -156,14 +155,22 @@ class _DesktopHomePageState extends State<DesktopHomePage>
                             fit: BoxFit.contain,
                           ),
                           const SizedBox(height: 6),
-                          const Text(
-                            'www.corebifact.com',
-                            style: TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w700,
-                              color: Color(0xFF0284C7),
+                          MouseRegion(
+                            cursor: SystemMouseCursors.click,
+                            child: GestureDetector(
+                              onTap: () => launchUrl(
+                                  Uri.parse('https://www.corebifact.com')),
+                              child: const Text(
+                                'www.corebifact.com',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w700,
+                                  color: Color(0xFF0284C7),
+                                  decoration: TextDecoration.underline,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
                             ),
-                            textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 2),
                           const Text(
