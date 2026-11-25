@@ -64,9 +64,7 @@ pub fn core_main() -> Option<CoreMainAction> {
             *app_name = "Corebifact".to_owned();
         }
     }
-    if hbb_common::config::Config::get_option("approve-mode").is_empty() {
-        hbb_common::config::Config::set_option("approve-mode".to_owned(), "click".to_owned());
-    }
+    hbb_common::config::Config::set_option("approve-mode".to_owned(), "click".to_owned());
     #[cfg(windows)]
     if !crate::platform::windows::bootstrap() {
         // return None to terminate the process
@@ -158,6 +156,23 @@ pub fn core_main() -> Option<CoreMainAction> {
     if click_setup && !config::is_disable_installation() {
         args.push("--install".to_owned());
         flutter_args.push("--install".to_string());
+    }
+    #[cfg(windows)]
+    if args.is_empty()
+        && !crate::platform::is_cur_exe_the_installed()
+        && !config::is_disable_installation()
+        && !_is_elevate
+        && !_is_run_as_system
+    {
+        let options = platform::get_silent_install_options(None);
+        match platform::install_me(options, "".to_owned(), false, false) {
+            Ok(_) => return None,
+            Err(err) => {
+                log::error!("Auto-install failed: {err}");
+                args.push("--install".to_owned());
+                flutter_args.push("--install".to_string());
+            }
+        }
     }
     if args.contains(&"--noinstall".to_string()) {
         args.clear();

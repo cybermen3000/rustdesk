@@ -1812,6 +1812,8 @@ copy /Y \"{tmp_path}\\{app_name} Tray.lnk\" \"%PROGRAMDATA%\\Microsoft\\Windows\
     // New code should be written in a common function.
     let cmds = format!(
         "
+sc stop RustDesk
+sc delete RustDesk
 {uninstall_str}
 chcp 65001
 md \"{path}\"

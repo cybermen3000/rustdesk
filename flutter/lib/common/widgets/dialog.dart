@@ -1015,8 +1015,8 @@ _connectDialog(
         showWaitAcceptDialog(
             sessionId,
             'wait-remote-accept-nook',
-            'Prompt',
-            'Please wait for the remote side to accept your session request...',
+            'Esperando aprobación',
+            'Solicitud enviada. Esperando que el cliente haga clic en "Aprobar" en su pantalla para iniciar el control remoto...',
             dialogManager);
       } else {
         dialogManager.showLoading(translate('Logging in...'),

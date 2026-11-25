@@ -4502,8 +4502,8 @@ lazy_static::lazy_static! {
             try_again: true,
         }), (LOGIN_MSG_NO_PASSWORD_ACCESS, LoginErrorMsgBox{
             msgtype: "wait-remote-accept-nook",
-            title: "Prompt",
-            text: "Please wait for the remote side to accept your session request...",
+            title: "Esperando aprobación",
+            text: "Solicitud enviada. Esperando que el cliente haga clic en \"Aprobar\" en su pantalla para iniciar el control remoto...",
             link: "",
             try_again: true,
         })]);
