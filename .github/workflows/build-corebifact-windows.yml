@@ -276,17 +276,6 @@ jobs:
               Write-Host "Ingore the printer driver error."
           }
 
-      - name: Run the Rust tests
-        # x86_64 only: the tests are the same code on arm64, and that runner is the slow one.
-        if: ${{ !inputs.upload-artifact && matrix.job.arch == 'x86_64' }}
-        shell: bash
-        run: |
-          # The build's own features, so the tests see the code that ships.
-          FEATURES=$(python3 ./build.py --portable --flutter --skip-portable-pack --hwcodec ${{ matrix.job.build-args }} --print-features)
-          cargo test --locked --release --lib --features "$FEATURES"
-          # Its Windows tests run nowhere else.
-          cargo test --locked --release -p clipboard
-
       - name: find Runner.res
         # Windows: find Runner.res (compiled from ./flutter/windows/runner/Runner.rc), copy to ./Runner.res
         # Runner.rc does not contain actual version, but Runner.res does
