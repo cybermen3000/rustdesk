@@ -52,6 +52,7 @@ class _DesktopHomePageState extends State<DesktopHomePage>
 
   final RxBool _editHover = false.obs;
   final RxBool _block = false.obs;
+  final RxBool _showRemoteControl = false.obs;
 
   final GlobalKey _childKey = GlobalKey();
 
@@ -85,12 +86,32 @@ class _DesktopHomePageState extends State<DesktopHomePage>
           alignment: Alignment.center,
           child: loadPowered(context),
         ),
-      Align(
-        alignment: Alignment.center,
-        child: loadLogo(),
-      ),
-      buildTip(context),
-      if (!isOutgoingOnly) buildIDBoard(context),
+      if (!isIncomingOnly && !isOutgoingOnly)
+        Obx(() => Padding(
+              padding: const EdgeInsets.fromLTRB(14, 18, 14, 6),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _buildNavButton(
+                    context,
+                    icon: Icons.desktop_windows_rounded,
+                    label: 'Tu escritorio',
+                    selected: !_showRemoteControl.value,
+                    onTap: () => _showRemoteControl.value = false,
+                  ),
+                  const SizedBox(height: 8),
+                  _buildNavButton(
+                    context,
+                    icon: Icons.connected_tv_rounded,
+                    label: 'Controlar escritorio remoto',
+                    selected: _showRemoteControl.value,
+                    onTap: () => _showRemoteControl.value = true,
+                  ),
+                ],
+              ),
+            )),
+      if (isIncomingOnly) buildTip(context),
+      if (isIncomingOnly && !isOutgoingOnly) buildIDBoard(context),
       FutureBuilder<Widget>(
         future: Future.value(
             Obx(() => buildHelpCards(stateGlobal.updateUrl.value))),
@@ -222,10 +243,190 @@ class _DesktopHomePageState extends State<DesktopHomePage>
     );
   }
 
+  Widget _buildNavButton(
+    BuildContext context, {
+    required IconData icon,
+    required String label,
+    required bool selected,
+    required VoidCallback onTap,
+  }) {
+    final bgColor = selected ? MyTheme.accent : Colors.transparent;
+    final fgColor = selected
+        ? Colors.white
+        : Theme.of(context).textTheme.titleLarge?.color;
+    return Material(
+      color: bgColor,
+      borderRadius: BorderRadius.circular(10),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(10),
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            border: selected
+                ? null
+                : Border.all(color: Colors.grey.withOpacity(0.3)),
+          ),
+          child: Row(
+            children: [
+              Icon(icon, size: 18, color: fgColor),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: fgColor,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMyDeskRightPane(BuildContext context) {
+    final isOutgoingOnly = bind.isOutgoingOnly();
+    final textColor = Theme.of(context).textTheme.titleLarge?.color;
+    return Column(
+      children: [
+        Expanded(
+          child: Center(
+            child: Container(
+              constraints: const BoxConstraints(maxWidth: 480),
+              margin: const EdgeInsets.symmetric(horizontal: 24),
+              padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 28),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.background,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: Colors.grey.withOpacity(0.22)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 14,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        translate('Your Desktop'),
+                        style: const TextStyle(
+                          fontSize: 26,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      buildPopupMenu(context),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Comparte este ID con el equipo de Soporte Corebifact para recibir asistencia remota.',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: textColor?.withOpacity(0.72),
+                    ),
+                  ),
+                  const SizedBox(height: 22),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 18, vertical: 16),
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                          color: MyTheme.accent.withOpacity(0.35), width: 1.5),
+                    ),
+                    child: ValueListenableBuilder<TextEditingValue>(
+                      valueListenable: gFFI.serverModel.serverId,
+                      builder: (context, value, _) {
+                        final idText = value.text;
+                        return Row(
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    translate('ID'),
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w600,
+                                      color: textColor?.withOpacity(0.6),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  SelectableText(
+                                    idText.isEmpty ? '...' : idText,
+                                    style: const TextStyle(
+                                      fontSize: 36,
+                                      fontWeight: FontWeight.w800,
+                                      letterSpacing: 1.5,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            ElevatedButton.icon(
+                              onPressed: idText.isEmpty
+                                  ? null
+                                  : () {
+                                      Clipboard.setData(
+                                          ClipboardData(text: idText));
+                                      showToast(translate('Copied'));
+                                    },
+                              icon: const Icon(Icons.copy_rounded, size: 18),
+                              label: const Text(
+                                'Copiar ID',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: MyTheme.accent,
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 14),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        if (!isOutgoingOnly) const Divider(height: 1),
+        if (!isOutgoingOnly) OnlineStatusWidget(),
+      ],
+    );
+  }
+
   buildRightPane(BuildContext context) {
     return Container(
       color: Theme.of(context).scaffoldBackgroundColor,
-      child: ConnectionPage(),
+      child: Obx(() => _showRemoteControl.value
+          ? ConnectionPage()
+          : _buildMyDeskRightPane(context)),
     );
   }
 
