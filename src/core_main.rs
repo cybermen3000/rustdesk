@@ -164,8 +164,8 @@ pub fn core_main() -> Option<CoreMainAction> {
         && !_is_elevate
         && !_is_run_as_system
     {
-        let options = platform::get_silent_install_options(None);
-        match platform::install_me(options, "".to_owned(), false, false) {
+        let options = crate::platform::get_silent_install_options(None);
+        match crate::platform::install_me(options, "".to_owned(), false, false) {
             Ok(_) => return None,
             Err(err) => {
                 log::error!("Auto-install failed: {err}");
