@@ -368,12 +368,6 @@ Widget buildConnectionCard(Client client) {
       key: ValueKey(client.id),
       children: [
         _CmHeader(client: client),
-        client.type_() == ClientType.file ||
-                client.type_() == ClientType.portForward ||
-                client.type_() == ClientType.terminal ||
-                client.disconnected
-            ? Offstage()
-            : _PrivilegeBoard(client: client),
         Expanded(
           child: Align(
             alignment: Alignment.bottomCenter,
@@ -1081,6 +1075,26 @@ class _CmControlPanel extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
+        Container(
+          width: double.infinity,
+          margin: const EdgeInsets.only(bottom: 16, left: 4, right: 4),
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: const Color(0xFFF0F9FF),
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: const Color(0xFFBAE6FD)),
+          ),
+          child: const Text(
+            'El personal de Soporte de Corebifact necesita acceder a su equipo. No presione aprobar si no ha solicitado el acceso de nuestro equipo',
+            style: TextStyle(
+              fontSize: 13.5,
+              fontWeight: FontWeight.w600,
+              color: Color(0xFF0F172A),
+              height: 1.4,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -1100,6 +1114,8 @@ class _CmControlPanel extends StatelessWidget {
                       },
                       text: 'Aprobar',
                       textColor: Colors.white,
+                      height: 48,
+                      fontSize: 16,
                     ),
                   ],
                 ),
@@ -1112,6 +1128,8 @@ class _CmControlPanel extends StatelessWidget {
                 onClick: handleDisconnect,
                 text: 'Rechazar',
                 textColor: null,
+                height: 48,
+                fontSize: 16,
               ),
             ),
           ],
@@ -1128,27 +1146,34 @@ class _CmControlPanel extends StatelessWidget {
       required String text,
       required Color? textColor,
       String? tooltip,
-      GestureTapDownCallback? onTapDown}) {
+      GestureTapDownCallback? onTapDown,
+      double height = 28,
+      double? fontSize}) {
     assert(!(onClick == null && onTapDown == null));
+    final textStyle = TextStyle(
+      color: textColor,
+      fontSize: fontSize,
+      fontWeight: fontSize != null ? FontWeight.bold : null,
+    );
     Widget textWidget;
     if (icon != null) {
       textWidget = Text(
         translate(text),
-        style: TextStyle(color: textColor),
+        style: textStyle,
         textAlign: TextAlign.center,
       );
     } else {
       textWidget = Expanded(
         child: Text(
           translate(text),
-          style: TextStyle(color: textColor),
+          style: textStyle,
           textAlign: TextAlign.center,
         ),
       );
     }
     final borderRadius = BorderRadius.circular(10.0);
     final btn = Container(
-      height: 28,
+      height: height,
       decoration: BoxDecoration(
           color: color, borderRadius: borderRadius, border: border),
       child: InkWell(
